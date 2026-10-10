@@ -25,7 +25,7 @@ function ok(name, cond, extra) { results.push([cond ? 'PASS' : 'FAIL', name, ext
   const dead0 = await erc.balanceOf(DEAD), pay0 = await pf.paymentsOf(w.address);
   const browser = await chromium.launch({ executablePath: '/usr/bin/google-chrome', args: ['--no-sandbox'] });
   const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, acceptDownloads: true, locale: 'zh-CN' });
-  await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: URL.replace(/\/$/, '') });
+  await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new globalThis.URL(URL).origin });
   const txs = [];
   await ctx.exposeBinding('__rpc', async (_s, method, params) => {
     if (method === 'eth_requestAccounts' || method === 'eth_accounts') return [w.address];

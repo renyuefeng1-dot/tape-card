@@ -7,8 +7,8 @@ PASS	preview shows name
 PASS	preview escapes tag HTML	
 PASS	javascript: link dropped	
 PASS	wallet connected	
-PASS	mint test BEM	0xcdb497c7facf92786cd64929ab607f4fd7c0023decda36df3da91705305cbe1c
-PASS	pay on testnet	支付成功！导出已解锁。授权交易: https://testnet.bscscan.com/tx/0xc538072252
+PASS	mint test BEM	0xb74eee13c288eaa2fe4b65270867fdb6de976d114396f5bbae912cf65babf948
+PASS	pay on testnet	支付成功！导出已解锁。授权交易: https://testnet.bscscan.com/tx/0xff83d4012b
 PASS	export unlocked after payment	
 PASS	on-chain paid(payer, keccak(html))	0x523da352eec1c0e826402b6af8b2dfb98173c4f93448d1360ba189d9205cafb1
 PASS	paymentsOf incremented	
@@ -29,4 +29,4 @@ PASS	app loads no external resources (except RPC)
 PASS	renders under strict CSP with no violations	
 PASS	paid wallet auto-unlocks on a new device (read from chain)	
 PASS	free mode: export enabled without wallet	
-TXS 0xcdb497c7facf92786cd64929ab607f4fd7c0023decda36df3da91705305cbe1c 0xc5380722523fccd45faa09341907c3a6aa694f8164b93a298bc8bbb37b7529ec 0x6e5d0d99a6c65874469624406702a94ab6dafe9a01d8d91cbdaf090ed7d94038
+TXS 0xb74eee13c288eaa2fe4b65270867fdb6de976d114396f5bbae912cf65babf948 0xff83d4012bd065e718fd9476b142385c14a2464bdc7d5b17c9966af14a8cd11d 0xcff47e08c46315d61d208fea58f9fa31f7f2aa1fada1ad5d5c6a21b50fe74310
