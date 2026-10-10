@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>.tape 名片生成器 · TapeOut 链上个人主页</title>
+<meta name="description" content="填几项信息，生成一个能直接放进 TapeOut 链上容器的个人主页（ZIP，根目录 index.html，无外部脚本）。">
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<div id="testBanner" class="banner" hidden></div>
+<header class="top">
+  <div class="brand"><span class="logo">.tape</span><span data-i="title">名片生成器</span></div>
+  <button id="langBtn" class="ghost small" type="button" aria-label="切换语言 / Switch language">中 / EN</button>
+</header>
+<p class="tagline" data-i="tagline">填几项信息，生成一个放进 TapeOut 链上容器的个人主页。</p>
+
+<nav class="tabs" role="tablist">
+  <button type="button" class="tab active" data-tab="edit" data-i="tabEdit">编辑</button>
+  <button type="button" class="tab" data-tab="preview" data-i="tabPreview">预览</button>
+  <button type="button" class="tab" data-tab="export" data-i="tabExport">导出</button>
+</nav>
+
+<main class="layout">
+<section class="pane" id="pane-edit">
+  <form id="form" autocomplete="off" onsubmit="return false">
+    <fieldset>
+      <legend data-i="secBasic">基本信息</legend>
+      <div class="avatarRow">
+        <div id="avatarBox" class="avatarBox" aria-hidden="true"></div>
+        <div>
+          <label class="btn ghost small" for="avatarFile" data-i="avatarPick">上传头像</label>
+          <input id="avatarFile" type="file" accept="image/*" hidden>
+          <button id="avatarClear" type="button" class="ghost small" data-i="avatarClear" hidden>移除</button>
+          <div class="hint" id="avatarInfo" data-i="avatarHint">会自动裁成 240×240 并压缩，内联进页面。</div>
+        </div>
+      </div>
+      <label><span data-i="fName">名字 / 昵称</span><input name="name" maxlength="40" data-ph="phName" placeholder="例：小明"></label>
+      <label><span data-i="fBio">一句话简介</span><input name="bio" maxlength="80" data-ph="phBio" placeholder="例：TapeOut 矿工，白天写代码，晚上坐禅"></label>
+      <label><span data-i="fIntro">详细介绍（可选）</span><textarea name="intro" rows="4" maxlength="1200" data-ph="phIntro" placeholder="空一行分段"></textarea></label>
+    </fieldset>
+
+    <fieldset>
+      <legend data-i="secLinks">链接</legend>
+      <label><span>X</span><input name="link_x" maxlength="120" placeholder="@handle"></label>
+      <label><span>Telegram</span><input name="link_telegram" maxlength="120" placeholder="@username"></label>
+      <label><span>GitHub</span><input name="link_github" maxlength="120" placeholder="username"></label>
+      <label><span data-i="fWebsite">网站</span><input name="link_website" maxlength="200" placeholder="https://"></label>
+      <div id="customList"></div>
+      <button type="button" id="addCustom" class="ghost small" data-i="addCustom">＋ 自定义链接</button>
+    </fieldset>
+
+    <fieldset>
+      <legend data-i="secWallets">展示的钱包地址</legend>
+      <div class="hint" data-i="walletHint">只展示，页面不会连接钱包。不要填私钥或助记词！</div>
+      <div id="walletList"></div>
+      <button type="button" id="addWallet" class="ghost small" data-i="addWallet">＋ 添加地址</button>
+    </fieldset>
+
+    <fieldset>
+      <legend data-i="secTags">标签（可选）</legend>
+      <div id="tagPresets" class="chips"></div>
+      <div class="row"><input id="tagInput" maxlength="16" data-ph="phTag" placeholder="自定义标签，回车添加"><button type="button" id="tagAdd" class="ghost small" data-i="add">添加</button></div>
+    </fieldset>
+
+    <fieldset>
+      <legend data-i="secStyle">风格</legend>
+      <div id="themeList" class="themes"></div>
+      <label><span data-i="fLang">名片语言</span>
+        <select name="lang"><option value="zh">中文</option><option value="en">English</option></select></label>
+    </fieldset>
+
+    <div class="row wrapRow">
+      <button type="button" id="loadSample" class="ghost small" data-i="loadSample">填入示例</button>
+      <label class="btn ghost small" for="importFile" data-i="importJson">导入 tape-card.json</label>
+      <input id="importFile" type="file" accept="application/json,.json" hidden>
+      <button type="button" id="resetBtn" class="ghost small danger" data-i="reset">清空</button>
+    </div>
+  </form>
+</section>
+
+<section class="pane" id="pane-preview">
+  <div class="previewHead"><span data-i="livePreview">实时预览</span><span id="sizeInfo" class="hint"></span></div>
+  <div class="phone"><iframe id="preview" title="preview" sandbox=""></iframe></div>
+</section>
+
+<section class="pane" id="pane-export">
+  <div class="box">
+    <h3 data-i="exportTitle">导出</h3>
+    <div id="feeLine" class="feeLine"></div>
+    <div id="walletBox">
+      <div class="row wrapRow">
+        <button type="button" id="connectBtn" class="btn" data-i="connect">连接钱包</button>
+        <button type="button" id="mintBtn" class="ghost small" data-i="mint" hidden>领取 100 测试 BEM</button>
+      </div>
+      <div id="acctLine" class="hint"></div>
+      <button type="button" id="payBtn" class="btn primary" hidden></button>
+      <div id="payStatus" class="status" aria-live="polite"></div>
+    </div>
+    <div class="row wrapRow exportBtns">
+      <button type="button" id="dlZip" class="btn primary" data-i="dlZip">下载 ZIP</button>
+      <button type="button" id="copyHtml" class="btn" data-i="copyHtml">复制 HTML</button>
+      <button type="button" id="dlHtml" class="ghost small" data-i="dlHtml">只下载 index.html</button>
+    </div>
+    <div id="exportStatus" class="status" aria-live="polite"></div>
+    <div id="checks" class="checks"></div>
+  </div>
+
+  <div class="box guide">
+    <h3 data-i="guideTitle">怎么发布到 TapeOut</h3>
+    <ol id="guideList"></ol>
+    <p class="hint"><span data-i="guideMore">卡住了？看排错手册：</span> <a id="guideLink" target="_blank" rel="noopener">https://renyuefeng1-dot.github.io/tapenow-guide/</a></p>
+  </div>
+
+  <div class="box">
+    <h3 data-i="aboutTitle">关于付费</h3>
+    <ul id="aboutList" class="small"></ul>
+    <p class="hint mono" id="contractLine"></p>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <span data-i="footNote">社区工具 · 非 TapeOut 官方 · 开源</span> ·
+  <a href="https://github.com/renyuefeng1-dot/tape-card" target="_blank" rel="noopener">https://github.com/renyuefeng1-dot/tape-card</a>
+</footer>
+
+<div id="toast" class="toast" hidden></div>
+<script src="./config.js"></script>
+<script src="./ethers.umd.min.js"></script>
+<script src="./render.js"></script>
+<script src="./zip.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+PASS	testnet banner shown	
+PASS	export locked before payment	
+PASS	fee read from chain	导出费 0.1 BEM，其中 50% 直接销毁（转入 0x…dEaD），其余进项
+PASS	avatar resized & inlined (<=48KB)	2203 chars
+PASS	avatar thumbnail shown in form	
+PASS	preview shows name	
+PASS	preview escapes tag HTML	
+PASS	javascript: link dropped	
+PASS	wallet connected	
+PASS	mint test BEM	0xcdb497c7facf92786cd64929ab607f4fd7c0023decda36df3da91705305cbe1c
+PASS	pay on testnet	支付成功！导出已解锁。授权交易: https://testnet.bscscan.com/tx/0xc538072252
+PASS	export unlocked after payment	
+PASS	on-chain paid(payer, keccak(html))	0x523da352eec1c0e826402b6af8b2dfb98173c4f93448d1360ba189d9205cafb1
+PASS	paymentsOf incremented	
+PASS	burned 0.05 BEM to dEaD	5000000
+PASS	zip filename	tape-card-lin.zip
+PASS	zip root has index.html, few files	index.html,tape-card.json
+PASS	zip <= 10 MiB	13.4 KB
+PASS	exported html == previewed html	
+PASS	audit: no script/external css/media	
+PASS	no external <link>/<script>/<img> URLs	
+PASS	footer link present	
+PASS	copy HTML to clipboard	10077 chars
+PASS	UI switches to English	
+PASS	language remembered	
+PASS	draft persisted	
+PASS	no page errors	
+PASS	app loads no external resources (except RPC)	
+PASS	renders under strict CSP with no violations	
+PASS	paid wallet auto-unlocks on a new device (read from chain)	
+PASS	free mode: export enabled without wallet	
+TXS 0xcdb497c7facf92786cd64929ab607f4fd7c0023decda36df3da91705305cbe1c 0xc5380722523fccd45faa09341907c3a6aa694f8164b93a298bc8bbb37b7529ec 0x6e5d0d99a6c65874469624406702a94ab6dafe9a01d8d91cbdaf090ed7d94038

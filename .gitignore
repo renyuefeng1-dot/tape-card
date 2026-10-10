@@ -1,0 +1,14 @@
+# secrets
+.env
+.env.*
+*.key
+*.pem
+.testkeys*
+keystore/
+# build
+contracts/out/
+contracts/cache/
+contracts/lib/
+contracts/broadcast/
+node_modules/
+e2e/downloads/

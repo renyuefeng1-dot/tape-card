@@ -1,0 +1,37 @@
+{
+  "v": 1,
+  "name": "山间矿工 Lin",
+  "bio": "TapeOut 矿工 · 白天写合约，晚上坐禅",
+  "intro": "2026 年开始玩 TapeOut，手上两台矿机，正在学 Solidity。\n\n这个页面本身就放在 TapeOut 的链上容器里——链在，页面就在。\n\n（示例数据，不是真人）",
+  "avatar": "data:image/webp;base64,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",
+  "links": {
+    "x": "@tape_lin_demo",
+    "telegram": "@tape_lin_demo",
+    "github": "tape-lin-demo",
+    "website": "tapeout.link"
+  },
+  "custom": [
+    {
+      "label": "TapeNow 排错手册",
+      "url": "https://renyuefeng1-dot.github.io/tapenow-guide/"
+    },
+    {
+      "label": "XSS 测试",
+      "url": "javascript:alert(1)"
+    }
+  ],
+  "wallets": [
+    {
+      "label": "BSC（示例地址）",
+      "addr": "0x000000000000000000000000000000000000dEaD"
+    }
+  ],
+  "tags": [
+    "矿工",
+    "开发者",
+    "禅修者",
+    "<b>标签</b>"
+  ],
+  "theme": "ink",
+  "lang": "zh"
+}
