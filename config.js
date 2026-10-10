@@ -1,9 +1,9 @@
 // .tape 名片生成器配置
 // paymentRequired: true = 导出前需要先在链上付一小笔 BEM；推广期想免费，改成 false 即可（页面会显示「推广期免费」）。
-// active: 现在只指向 BSC 测试网（测试网演示）。上主网时部署审计过的合约后，把 active 改成 "bsc" 并填 contract。
+// active: 默认 BSC 主网（真实 BEM）。在网址后加 ?net=testnet 可切回 BSC 测试网演示（测试 BEM，可领取）。
 window.TAPECARD_CONFIG = {
   paymentRequired: true,
-  active: "bscTestnet",
+  active: (/[?&]net=testnet\b/.test(location.search) ? "bscTestnet" : "bsc"),
   siteUrl: "https://renyuefeng1-dot.github.io/tape-card/",
   guideUrl: "https://renyuefeng1-dot.github.io/tapenow-guide/",
   networks: {
@@ -27,7 +27,7 @@ window.TAPECARD_CONFIG = {
       rpcUrl: "https://bsc-dataseed.bnbchain.org",
       explorer: "https://bscscan.com",
       nativeSymbol: "BNB",
-      contract: "", // 审计后部署再填
+      contract: "0x9777F9037DAaAeA79f787B0d8bB5fC2EF2ebF4F6", // ProfileFee（主网，2026-10-10 部署，Sourcify 已验证）
       token: "0x5ce033B2bFCa3Af30b3e8C8457DeaF776A8b695a", // 真实 BEM
       decimals: 8
     }

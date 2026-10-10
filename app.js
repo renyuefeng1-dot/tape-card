@@ -32,7 +32,7 @@
       unlocked: '已解锁：这个钱包已付过费，可以随时导出。',
       needPay: '先连接钱包并支付导出费，才能下载或复制。', noWallet: '没检测到钱包。请用 MetaMask / OKX / Binance Web3 等钱包的内置浏览器打开本页。',
       wrongChain: '正在切换到 ', approving: '第 1 步：授权本次费用（只授权 ', approving2: ' BEM）…', paying: '第 2 步：支付并上链登记…',
-      paid: '支付成功！导出已解锁。', rejected: '你在钱包里取消了。', lowBal: '测试 BEM 不够，先点「领取 100 测试 BEM」。', lowGas: '钱包里没有 tBNB 付 gas，去水龙头领一点：',
+      paid: '支付成功！导出已解锁。', rejected: '你在钱包里取消了。', lowBal: '测试 BEM 不够，先点「领取 100 测试 BEM」。', lowBalMain: 'BEM 余额不够支付导出费。', aboutTest: '现在是测试网演示：用的是没有价值的测试 BEM。', lowGas: '钱包里没有足够的 BNB 付 gas',
       minting: '正在领取测试 BEM…', minted: '已领取 100 测试 BEM。', balance: '余额', txApprove: '授权交易', txPay: '支付交易', txMint: '领取交易',
       copied: '已复制 HTML，可以直接粘贴使用。', copyFail: '复制失败，请改用「只下载 index.html」。', downloaded: '已生成：',
       chkTop: 'ZIP 根目录就是 index.html', chkSize: '大小 ', chkFiles: '文件数 ', chkNoScript: '没有 <script>、外部样式、外部图片（CSP 安全）', chkBad: '发现问题：',
@@ -51,7 +51,7 @@
         '合约不保管任何代币，每次只划走当时的费用（不超过你确认的金额），我们只授权这一笔的额度。',
         '合约会记录「谁为哪个名片付了费」（名片内容的哈希），名片内容本身不上链。',
         '名片页面里没有任何脚本，也不会连接访客的钱包。',
-        '这是开源的网页工具，付费是对工具的支持，不是安全保证；现在是测试网演示，合约未审计。'
+        '这是开源的网页工具，付费是对工具的支持，不是安全保证；合约源码已公开验证，但未经第三方审计。'
       ],
       contract: '合约', token: '代币'
     },
@@ -78,7 +78,7 @@
       unlocked: 'Unlocked: this wallet has paid, export any time.',
       needPay: 'Connect a wallet and pay the export fee to download or copy.', noWallet: 'No wallet found. Open this page in the in-app browser of MetaMask / OKX / Binance Web3 etc.',
       wrongChain: 'Switching to ', approving: 'Step 1: approving this fee only (', approving2: ' BEM)…', paying: 'Step 2: paying and recording on-chain…',
-      paid: 'Paid! Export unlocked.', rejected: 'You cancelled in the wallet.', lowBal: 'Not enough test BEM — tap “Get 100 test BEM” first.', lowGas: 'No tBNB for gas. Get some from the faucet:',
+      paid: 'Paid! Export unlocked.', rejected: 'You cancelled in the wallet.', lowBal: 'Not enough test BEM — tap “Get 100 test BEM” first.', lowBalMain: 'Not enough BEM to pay the export fee.', aboutTest: 'Testnet demo: uses worthless test BEM.', lowGas: 'Not enough BNB for gas',
       minting: 'Minting test BEM…', minted: 'Got 100 test BEM.', balance: 'Balance', txApprove: 'Approve tx', txPay: 'Pay tx', txMint: 'Mint tx',
       copied: 'HTML copied.', copyFail: 'Copy failed — use “Download index.html only”.', downloaded: 'Generated: ',
       chkTop: 'index.html sits at the ZIP root', chkSize: 'Size ', chkFiles: 'Files ', chkNoScript: 'No <script>, external CSS or external images (CSP-safe)', chkBad: 'Problems: ',
@@ -97,7 +97,7 @@
         'The contract never holds tokens and only pulls the current fee (never more than the amount you confirm); we only approve that one fee.',
         'The contract records who paid for which card (a hash of the page). Your card content itself is not stored on-chain.',
         'Generated pages contain no scripts and never connect a visitor’s wallet.',
-        'This is an open-source web tool; the fee supports the tool, it is not a security guarantee. Testnet demo, contract unaudited.'
+        'This is an open-source web tool; the fee supports the tool, it is not a security guarantee. Contract source is verified but not third-party audited.'
       ],
       contract: 'Contract', token: 'Token'
     }
@@ -148,7 +148,7 @@
     if (!e) return 'error';
     if (e.code === 'ACTION_REJECTED' || e.code === 4001 || (e.info && e.info.error && e.info.error.code === 4001)) return T('rejected');
     var m = (e.shortMessage || e.reason || e.message || String(e));
-    if (/insufficient funds/i.test(m)) return T('lowGas') + ' <a href="' + NET.faucet + '" target="_blank" rel="noopener">' + NET.faucet + '</a>';
+    if (/insufficient funds/i.test(m)) return T('lowGas') + (NET.faucet ? '：<a href="' + NET.faucet + '" target="_blank" rel="noopener">' + NET.faucet + '</a>' : '。');
     return R.esc(m.slice(0, 200));
   }
 
@@ -158,7 +158,7 @@
     document.querySelectorAll('[data-i]').forEach(function (el) { var v = T(el.getAttribute('data-i')); if (typeof v === 'string') el.textContent = v; });
     document.querySelectorAll('[data-ph]').forEach(function (el) { el.placeholder = T(el.getAttribute('data-ph')); });
     $('#guideList').innerHTML = T('guide').map(function (s) { return '<li>' + s + '</li>'; }).join('');
-    $('#aboutList').innerHTML = T('about').map(function (s) { return '<li>' + s + '</li>'; }).join('');
+    $('#aboutList').innerHTML = T('about').concat(NET.testnet ? [T('aboutTest')] : []).map(function (s) { return '<li>' + s + '</li>'; }).join('');
     $('#guideLink').href = CFG.guideUrl; $('#guideLink').textContent = CFG.guideUrl;
     $('#contractLine').innerHTML = NET.contract ? (T('contract') + ' ProfileFee: <a href="' + NET.explorer + '/address/' + NET.contract + '" target="_blank" rel="noopener">' + NET.contract + '</a><br>' + T('token') + ' BEM: ' + NET.token) : '';
     var b = $('#testBanner');
@@ -358,7 +358,7 @@
       var f = await new ethers.Contract(NET.contract, ABI_PF, readProv).fee(); fee = f;
       var t = new ethers.Contract(NET.token, ABI_T, signer);
       var bal = await t.balanceOf(acct);
-      if (bal < f) { status(st, T('lowBal'), 'err'); btn.disabled = false; return; }
+      if (bal < f) { status(st, T(NET.testnet ? 'lowBal' : 'lowBalMain'), 'err'); btn.disabled = false; return; }
       var allow = await t.allowance(acct, NET.contract);
       if (allow < f) {
         status(st, T('approving') + fmt(f) + T('approving2'));

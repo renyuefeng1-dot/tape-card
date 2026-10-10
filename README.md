@@ -2,11 +2,13 @@
 
 > 填几项信息，生成一个能直接放进 TapeOut 链上容器（DeWeb）的个人主页。
 >
-> ⚠️ 现在是 **BSC 测试网演示**：导出费用的是测试 BEM，没有价值；合约**未审计**，没有部署到主网。社区工具，非 TapeOut 官方。
+> ✅ 已上线 **BSC 主网**：导出费 0.1 BEM（真实 BEM），50% 直接销毁。合约源码已在 Sourcify 公开验证，但**未经第三方审计**。社区工具，非 TapeOut 官方。
+>
+> 测试网演示仍可用：网址后加 `?net=testnet`（https://renyuefeng1-dot.github.io/tape-card/?net=testnet），用测试 BEM，可在页面领取。
 
 - 在线使用：https://renyuefeng1-dot.github.io/tape-card/
 - 示例名片（示例数据，不是真人）：https://renyuefeng1-dot.github.io/tape-card/sample/demo/
-- English: a static, mobile-first generator for self-contained personal homepages (single `index.html`, no scripts, inline CSS and avatar) ready to publish into a TapeOut DeWeb container via TapeNow. Export is gated by a tiny BEM fee on **BSC testnet** (50% burned). Contract unaudited.
+- English: a static, mobile-first generator for self-contained personal homepages (single `index.html`, no scripts, inline CSS and avatar) ready to publish into a TapeOut DeWeb container via TapeNow. Export is gated by a 0.1 BEM fee on **BSC mainnet** (50% burned; source verified on Sourcify, not third-party audited). Testnet demo: append `?net=testnet`.
 
 ## 功能
 
@@ -17,9 +19,9 @@
 - 应用本身：无 CDN，ethers 本地打包（`ethers.umd.min.js`），中 / EN 切换（记住选择），手机优先。
 - 应用内有中文发布指南（项目设置 → 链上发布目标 → CPU Index / Token ID …），并链接排错手册 https://renyuefeng1-dot.github.io/tapenow-guide/
 
-## 付费（测试网）
+## 付费
 
-`config.js` 里 `paymentRequired: true` 时，导出前要付一小笔 BEM；推广期改成 `false` 即可免费（页面会显示「推广期免费」）。
+`config.js` 里 `active` 默认是 `"bsc"`（主网），网址带 `?net=testnet` 时切到 `"bscTestnet"`。`paymentRequired: true` 时，导出前要付一小笔 BEM；推广期改成 `false` 即可免费（页面会显示「推广期免费」）。
 
 合约 `contracts/src/ProfileFee.sol`：
 - `pay(bytes32 profileHash, uint256 maxFee)`：从付款人钱包直接把 `fee × burnBps` 转到 `0x000000000000000000000000000000000000dEaD` 销毁，其余转到部署时写死的 `treasury`；发出 `Paid(payer, profileHash, fee, burned, toTreasury)` 事件。`profileHash` = 名片 `index.html` 的 keccak256，名片内容本身不上链。
@@ -27,16 +29,31 @@
 - owner 只能在部署时固定的上下限内调 `fee`（0.001 ~ 5 BEM）和 `burnBps`（10% ~ 100%），`token` 和 `treasury` 不可变；Ownable2Step；SafeERC20。
 - 解锁规则：每个钱包付一次（链上 `paymentsOf(addr) > 0`），之后换设备、改内容都能导出。注意：这是开源静态网页，付费门槛在浏览器端，懂技术的人可以绕过——它是对工具的支持和 BEM 的消耗场景，不是 DRM。
 
+### 主网（BSC，chainId 56）
+
 | 项目 | 值 |
 |---|---|
-| 网络 | BSC Testnet（chainId 97） |
+| ProfileFee | `0x9777F9037DAaAeA79f787B0d8bB5fC2EF2ebF4F6` https://bscscan.com/address/0x9777F9037DAaAeA79f787B0d8bB5fC2EF2ebF4F6 |
+| 源码验证 | Sourcify exact match：https://repo.sourcify.dev/56/0x9777F9037DAaAeA79f787B0d8bB5fC2EF2ebF4F6 |
+| 部署交易 | https://bscscan.com/tx/0x0f0ccb4d05c13f459a4caf9c337c00e2b267bc9ae2844c5a29ca6220da7e2701 （区块 126791955，2026-10-10） |
+| 代币 | BEM `0x5ce033B2bFCa3Af30b3e8C8457DeaF776A8b695a`（8 位小数） |
+| 费用 / 销毁 | 0.1 BEM（`1e7`），50% 转入 `0x…dEaD` 销毁（`burnBps = 5000`） |
+| 费用可调范围 | 0.001 ~ 5 BEM（不可变） |
+| treasury（不可变） | `0xb16a39789A88546E1448a403414e038209b568aA` |
+| owner | `0x6Dc951a2fa02B48A4B91e7aD0c7D23666c9f99e4`（部署钱包；可用 Ownable2Step 转给你自己的钱包） |
+
+部署脚本：`contracts/script/DeployMainnet.s.sol`。上线前对着主网真实 BEM 状态做了分叉模拟付款（`BSC_FORK=1 forge test --match-contract Fork`）：转账返回 true、无转账税，0.05 BEM 到 `0x…dEaD`、0.05 BEM 到 treasury。
+
+### 测试网（BSC Testnet，chainId 97，`?net=testnet`）
+
+| 项目 | 值 |
+|---|---|
 | ProfileFee | `0xCb1f367F716298268Dd0140fa37990541F85559A` https://testnet.bscscan.com/address/0xCb1f367F716298268Dd0140fa37990541F85559A |
 | 源码验证 | Sourcify exact match：https://repo.sourcify.dev/97/0xCb1f367F716298268Dd0140fa37990541F85559A |
 | 部署交易 | https://testnet.bscscan.com/tx/0x1affa014f318ba54d29762c863611d1a78509a0a8b06933351b5733ebedde9fd |
 | 代币（测试网 MockBEM，8 位小数，任何人可 mint） | `0xAf81078FA7DF6aF5E5bD97B98a358939600EC320` |
 | 费用 / 销毁 | 0.1 BEM，50% 销毁 |
 | treasury / owner | `0x6Dc951a2fa02B48A4B91e7aD0c7D23666c9f99e4` |
-| 主网 BEM（以后用） | `0x5ce033B2bFCa3Af30b3e8C8457DeaF776A8b695a` |
 
 端到端测试的一次真实付款（测试网）：领取测试 BEM https://testnet.bscscan.com/tx/0xcdb497c7facf92786cd64929ab607f4fd7c0023decda36df3da91705305cbe1c · 授权 0.1 BEM https://testnet.bscscan.com/tx/0xc5380722523fccd45faa09341907c3a6aa694f8164b93a298bc8bbb37b7529ec · 支付（0.05 销毁 + 0.05 金库）https://testnet.bscscan.com/tx/0x6e5d0d99a6c65874469624406702a94ab6dafe9a01d8d91cbdaf090ed7d94038
 
@@ -51,13 +68,12 @@ forge test -vv
 - Foundry：18 个测试（含 512 轮模糊测试）全部通过——50/50 拆分、合约不留币、无限授权也只扣费用、`maxFee` 防抬价、空哈希、无授权 / 余额不足、多次付款、费用和销毁比例上下限、非 owner 不能改、两步转移 owner、构造参数校验、SafeERC20 拒绝返回 false 的代币、资金守恒。
 - 浏览器端到端（`e2e/e2e.cjs`，Playwright + 本地 Chrome，测试网真实交易，每次生成临时钱包）：31 项全部通过——填表 → 头像压缩 → 预览 / XSS 转义 / 丢弃 `javascript:` 链接 → 6 种主题 → 连接钱包 → 领取测试 BEM → 授权 + 支付 → 链上 `paid()` / 销毁 0.05 BEM 核对 → 下载 ZIP（根目录 index.html、≤10 MiB）→ 导出页 = 预览页、无外部脚本/样式/图片 → 复制 HTML → 中/EN 切换并记住 → 严格 CSP 下渲染无报错 → 已付钱包换浏览器自动解锁 → 推广期免费模式。
 
-## 上主网前
+## 后续
 
 1. 请人审计 `ProfileFee.sol`（代码很短，但仍需要第二双眼睛）。
-2. treasury 和 owner 换成多签钱包（部署时写死 treasury）。
-3. 用真实 BEM `0x5ce0…695a` 部署，在 BscScan 公开源码；`config.js` 填主网合约，`active` 改成 `"bsc"`。
-4. 定主网费用（建议先 `paymentRequired: false` 推广，或很小的费用）。
-5. 自己把一份名片真实发布进 TapeOut 容器验证一遍（目前 TapeNow BSC 发布 `/chain/prepare` 有 500 报错，等官方修复）。
+2. 需要的话把 owner 转到你自己的钱包：owner 调 `transferOwnership(新地址)`，新地址再调 `acceptOwnership()`。
+3. 在 BscScan 上也提交源码验证（目前已在 Sourcify 验证）。
+4. 自己把一份名片真实发布进 TapeOut 容器验证一遍（目前 TapeNow BSC 发布 `/chain/prepare` 有 500 报错，等官方修复）。
 
 ## 许可
 
